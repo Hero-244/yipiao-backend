@@ -1938,6 +1938,9 @@ let ticketTypesData = []
 let ordersData = []
 let usersData = []
 
+// 默认后端地址（CloudBase 部署后自动使用）
+const DEFAULT_BASE_URL = 'https://yipiao-backend-249967-6-1407067346.sh.run.tcloudbase.com'
+
 // 角色权限映射
 const PERMISSIONS = {
   admin: ['stats', 'expos', 'tickets-type', 'orders', 'verify', 'users', 'settings'],
@@ -1952,15 +1955,14 @@ const DEFAULT_USERS = [
 
 // ===================== 初始化 =====================
 document.addEventListener('DOMContentLoaded', async () => {
-  // 读取后端地址并初始化 API
+  // 读取后端地址并初始化 API（优先使用默认地址）
   const savedBaseUrl = localStorage.getItem('yipiao_admin_base_url')
-  if (savedBaseUrl) {
-    BASE_URL = savedBaseUrl.replace(/\/$/, '')
-    try {
-      await api.init({ baseUrl: BASE_URL })
-    } catch (e) {
-      console.warn('[易票] API 初始化失败', e)
-    }
+  const baseUrl = savedBaseUrl || DEFAULT_BASE_URL
+  BASE_URL = baseUrl.replace(/\/$/, '')
+  try {
+    await api.init({ baseUrl: BASE_URL })
+  } catch (e) {
+    console.warn('[易票] API 初始化失败', e)
   }
 
   // 检查是否已登录
