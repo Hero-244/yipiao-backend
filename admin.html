@@ -1941,6 +1941,9 @@ let usersData = []
 // 默认后端地址（CloudBase 部署后自动使用）
 const DEFAULT_BASE_URL = 'https://yipiao-backend-250026-6-1252418666.sh.run.tcloudbase.com'
 
+// 强制清除缓存的 baseUrl，使用新地址
+localStorage.removeItem('yipiao_admin_base_url')
+
 // 角色权限映射
 const PERMISSIONS = {
   admin: ['stats', 'expos', 'tickets-type', 'orders', 'verify', 'users', 'settings'],
