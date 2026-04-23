@@ -6,7 +6,6 @@
  */
 
 let BASE_URL = ''
-let currentUser = null
 
 // ===================== 工具函数 =====================
 
@@ -17,9 +16,9 @@ async function request(method, path, data = null) {
     method,
     headers: { 'Content-Type': 'application/json' }
   }
-  if (currentUser) {
-    opts.headers['X-User-Id'] = currentUser.id
-    opts.headers['X-User-Role'] = currentUser.role
+  if (window.currentUser) {
+    opts.headers['X-User-Id'] = window.currentUser.id
+    opts.headers['X-User-Role'] = window.currentUser.role
   }
 
   let url = `${BASE_URL}${path}`
@@ -46,12 +45,11 @@ async function init(config = {}) {
 
 async function login(username, password) {
   const user = await request('POST', '/api/login', { username, password })
-  currentUser = user
   return user
 }
 
 function logout() {
-  currentUser = null
+  // nothing to do - admin.html manages currentUser
 }
 
 // ===================== 业务接口 =====================
@@ -156,7 +154,7 @@ if (typeof window !== 'undefined') {
     getTicketTypes, createTicketType, updateTicketType, deleteTicketType,
     getTickets, verifyTicket, getStats,
     getUsers, createUser, updateUser, deleteUser,
-    get currentUser() { return currentUser }
+    get currentUser() { return window.currentUser }
   }
 }
 
