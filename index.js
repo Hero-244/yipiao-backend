@@ -26,8 +26,18 @@ const _ = db.command
 
 // ==================== 工具函数 ====================
 
+// 把 CloudBase 的 _id 转换成 id，方便前端使用
+function normalizeData(data) {
+  if (Array.isArray(data)) {
+    return data.map(item => ({ ...item, id: item._id }))
+  } else if (data && typeof data === 'object') {
+    return { ...data, id: data._id }
+  }
+  return data
+}
+
 function ok(res, data, message = 'success') {
-  res.json({ code: 0, message, data })
+  res.json({ code: 0, message, data: normalizeData(data) })
 }
 
 function fail(res, message = 'error', code = 1) {
