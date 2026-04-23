@@ -6,13 +6,22 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
+const multer = require('multer')
+const path = require('path')
 const TcbSdk = require('@cloudbase/node-sdk')
 
 const app = express()
 
 // 中间件
 app.use(cors())
-app.use(express.json())
+app.use(express.json({ limit: '50mb' }))
+app.use(express.urlencoded({ extended: true, limit: '50mb' }))
+
+// 文件上传配置
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+})
 
 // 初始化 CloudBase
 const env = TcbSdk.init({
@@ -22,6 +31,7 @@ const env = TcbSdk.init({
 })
 
 const db = env.database()
+const cloudStorage = env.uploadFile
 const _ = db.command
 
 // ==================== 工具函数 ====================
@@ -60,6 +70,39 @@ function genVerifyCode() {
 function now() {
   return Date.now()
 }
+
+// ==================== 文件上传接口 ====================
+
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return fail(res, '没有上传文件')
+    }
+
+    // 生成唯一文件名
+    const ext = path.extname(req.file.originalname)
+    const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}${ext}`
+    const cloudPath = `uploads/${filename}`
+
+    // 上传到云存储
+    const result = await cloudStorage({
+      cloudPath,
+      fileContent: req.file.buffer
+    })
+
+    // 获取文件访问 URL
+    const fileUrl = env.getTempFileURL(result.fileId)
+    const urlResult = await fileUrl()
+
+    ok(res, {
+      fileId: result.fileId,
+      url: urlResult.tempFileURL
+    }, '上传成功')
+  } catch (e) {
+    console.error('上传失败', e)
+    fail(res, '上传失败')
+  }
+})
 
 // ==================== 登录接口 ====================
 
