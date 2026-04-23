@@ -2125,18 +2125,33 @@ function showToast(message, type = 'success') {
 }
 
 // ===================== 图片上传 =====================
-function handleImageUpload(input, previewId, hiddenId) {
+async function handleImageUpload(input, previewId, hiddenId) {
   const file = input.files[0]
   if (!file) return
 
-  const reader = new FileReader()
-  reader.onload = e => {
-    const preview = document.getElementById(previewId)
-    preview.innerHTML = `<img src="${e.target.result}" alt="预览">`
+  const preview = document.getElementById(previewId)
+  preview.innerHTML = '<span style="color:var(--text-muted);">上传中...</span>'
+
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const res = await fetch(`${BASE_URL}/api/upload`, {
+      method: 'POST',
+      body: formData
+    })
+    const json = await res.json()
+
+    if (json.code !== 0) throw new Error(json.message || '上传失败')
+
+    const url = json.data.url
+    preview.innerHTML = `<img src="${url}" alt="预览">`
     preview.classList.add('has-image')
-    document.getElementById(hiddenId).value = e.target.result
+    document.getElementById(hiddenId).value = url
+  } catch (e) {
+    preview.innerHTML = '<span style="color:var(--danger);">上传失败</span>'
+    console.error('上传失败', e)
   }
-  reader.readAsDataURL(file)
 }
 
 // ===================== 富文本编辑器 =====================
