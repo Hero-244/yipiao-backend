@@ -389,7 +389,6 @@ app.get('/api/health', (req, res) => {
 })
 
 // ==================== 静态文件服务 ====================
-const path = require('path')
 // 静态文件在当前目录（因为 Dockerfile 把代码复制到 /app）
 app.use(express.static(__dirname))
 app.get('/', (req, res) => {
