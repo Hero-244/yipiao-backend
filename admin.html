@@ -2537,8 +2537,8 @@ async function loadTicketTypes() {
     const filterOptions = ['<option value="">全部展会</option>']
     const formOptions = ['<option value="">请选择展会</option>']
     for (const expo of expos) {
-      filterOptions.push(`<option value="${expo._id}">${expo.name}</option>`)
-      formOptions.push(`<option value="${expo._id}">${expo.name}</option>`)
+      filterOptions.push(`<option value="${expo.id}">${expo.name}</option>`)
+      formOptions.push(`<option value="${expo.id}">${expo.name}</option>`)
     }
     filterExpo.innerHTML = filterOptions.join('')
     filterExpo.value = expoId
@@ -2558,7 +2558,7 @@ async function loadTicketTypes() {
     // 按展会分组展示
     const grouped = {}
     for (const t of ticketTypesData) {
-      const expoName = expos.find(e => e._id === t.expoId)?.name || t.expoId
+      const expoName = expos.find(e => e.id === t.expoId)?.name || t.expoId
       if (!grouped[t.expoId]) grouped[t.expoId] = { name: expoName, types: [] }
       grouped[t.expoId].types.push(t)
     }
@@ -2584,8 +2584,8 @@ async function loadTicketTypes() {
           <td><span class="badge ${statusClass}">${statusText}</span></td>
           <td>
             <div class="action-btns">
-              <button class="action-btn" onclick="editTicketType('${t._id}')" title="编辑">✏️</button>
-              <button class="action-btn" onclick="toggleTicketTypeStatus('${t._id}', '${t.status}')" title="${t.status === 'active' ? '下架' : '上架'}">${t.status === 'active' ? '📤' : '📥'}</button>
+              <button class="action-btn" onclick="editTicketType('${t.id}')" title="编辑">✏️</button>
+              <button class="action-btn" onclick="toggleTicketTypeStatus('${t.id}', '${t.status}')" title="${t.status === 'active' ? '下架' : '上架'}">${t.status === 'active' ? '📤' : '📥'}</button>
             </div>
           </td>
         </tr>`
@@ -2605,7 +2605,7 @@ async function loadTicketTypes() {
 
 function showTicketTypeModal(ticketType = null) {
   document.getElementById('ticket-type-modal-title').querySelector('span:last-child').textContent = ticketType ? '编辑票种' : '新增票种'
-  document.getElementById('ticket-type-id').value = ticketType ? ticketType._id : ''
+  document.getElementById('ticket-type-id').value = ticketType ? ticketType.id : ''
 
   // 设置展会选项
   const expoSelect = document.getElementById('ticket-type-expo')
@@ -2632,7 +2632,7 @@ function closeTicketTypeModal() {
 }
 
 async function editTicketType(id) {
-  const t = ticketTypesData.find(tt => tt._id === id)
+  const t = ticketTypesData.find(tt => tt.id === id)
   if (t) showTicketTypeModal(t)
 }
 
@@ -2727,7 +2727,7 @@ async function loadOrders() {
     const filterExpo = document.getElementById('order-filter-expo')
     const options = ['<option value="">全部展会</option>']
     for (const expo of expos) {
-      options.push(`<option value="${expo._id}">${expo.name}</option>`)
+      options.push(`<option value="${expo.id}">${expo.name}</option>`)
     }
     filterExpo.innerHTML = options.join('')
     filterExpo.value = expoId
@@ -2753,7 +2753,7 @@ async function loadOrders() {
       const priceDisplay = order.price === 0 ? '<span style="color:var(--success);">免费</span>' : `¥${(order.price || 0) * (order.quantity || 1)}`
 
       html += `<tr>
-        <td><code style="font-size:12px;background:var(--bg-input);padding:2px 6px;border-radius:4px;">${order.orderNo || order._id?.slice(-8) || '-'}</code></td>
+        <td><code style="font-size:12px;background:var(--bg-input);padding:2px 6px;border-radius:4px;">${order.orderNo || order.id?.slice(-8) || '-'}</code></td>
         <td>${order.expoName || '-'}</td>
         <td>${order.ticketTypeName || '-'}</td>
         <td>${order.userName || '-'}</td>
