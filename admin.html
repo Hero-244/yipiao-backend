@@ -2017,23 +2017,30 @@ function fillDemo(username, password) {
 
 async function handleLogin(e) {
   e.preventDefault()
+  console.log('[DEBUG] handleLogin called')
   const username = document.getElementById('login-username').value.trim()
   const password = document.getElementById('login-password').value
+  console.log('[DEBUG] username:', username)
 
   if (!BASE_URL) {
+    console.log('[DEBUG] BASE_URL is empty!')
     const errorEl = document.getElementById('login-error')
     errorEl.textContent = '请先在右上角「⚙️」配置后端服务地址'
     errorEl.classList.add('show')
     setTimeout(() => errorEl.classList.remove('show'), 4000)
     return
   }
+  console.log('[DEBUG] BASE_URL:', BASE_URL)
 
   try {
+    console.log('[DEBUG] calling api.login...')
     const user = await api.login(username, password)
+    console.log('[DEBUG] login success:', user)
     currentUser = user
     localStorage.setItem('yipiao_admin_user', JSON.stringify(currentUser))
     showApp()
   } catch (e) {
+    console.log('[DEBUG] login error:', e)
     const errorEl = document.getElementById('login-error')
     errorEl.textContent = e.message || '登录失败，请检查后端服务'
     errorEl.classList.add('show')
