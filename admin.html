@@ -2333,10 +2333,14 @@ async function loadExpos() {
         ? `<img class="table-image" src="${expo.poster}" alt="${expo.name}">`
         : '<div class="table-image" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);">🖼️</div>'
 
+      // 统一字段名：startDate -> start_date, endDate -> end_date
+      const startDate = expo.startDate || expo.start_date || ''
+      const endDate = expo.endDate || expo.end_date || ''
+
       html += `<tr>
         <td>${posterThumb}</td>
-        <td><strong>${expo.name}</strong></td>
-        <td>${expo.startDate || '-'} ~ ${expo.endDate || '-'}</td>
+        <td><strong>${expo.name || '未命名'}</strong></td>
+        <td>${startDate || '-'} ~ ${endDate || '-'}</td>
         <td>${expo.venue || expo.location || '-'}</td>
         <td><span class="badge ${statusClass}">${statusText}</span></td>
         <td>
