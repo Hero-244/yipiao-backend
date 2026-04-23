@@ -1,0 +1,2944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>易票管理系统</title>
+  <style>
+    /* ===================== 暗绿主题变量 ===================== */
+    :root {
+      --primary: #1a3a2e;
+      --primary-light: #2d5a47;
+      --primary-hover: #3d7a5f;
+      --bg: #0a1510;
+      --bg-sidebar: #0d1f17;
+      --bg-card: #152a21;
+      --bg-input: #0d1f17;
+      --bg-hover: rgba(45, 90, 71, 0.3);
+      --text: #e8f0ec;
+      --text-secondary: #8ba899;
+      --text-muted: #5a7a6a;
+      --border: #1e3d30;
+      --border-light: #2a4f3d;
+      --success: #4ade80;
+      --success-bg: rgba(74, 222, 128, 0.1);
+      --warning: #fbbf24;
+      --warning-bg: rgba(251, 191, 36, 0.1);
+      --danger: #f87171;
+      --danger-bg: rgba(248, 113, 113, 0.1);
+      --info: #60a5fa;
+      --info-bg: rgba(96, 165, 250, 0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --sidebar-width: 240px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===================== 登录页 ===================== */
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--bg) 0%, var(--primary) 100%);
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow);
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-logo-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--success), #22c55e);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 32px;
+    }
+
+    .login-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .login-form {
+      margin-top: 32px;
+    }
+
+    .login-error {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .login-error.show { display: block; }
+
+    /* ===================== 布局 ===================== */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ===================== 侧边栏 ===================== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-brand {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--success), #22c55e);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+    }
+
+    .nav-section {
+      margin-bottom: 24px;
+    }
+
+    .nav-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      padding: 0 8px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      margin-bottom: 2px;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: var(--primary-light);
+      color: var(--text);
+    }
+
+    .nav-item-icon {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .nav-item-badge {
+      margin-left: auto;
+      background: var(--success);
+      color: var(--bg);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+    }
+
+    .sidebar-user-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .sidebar-user-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sidebar-user-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-user-role {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: var(--danger-bg);
+    }
+
+    /* ===================== 主内容区 ===================== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .config-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .config-btn:hover {
+      border-color: var(--warning);
+      color: var(--warning);
+    }
+
+    .page-content {
+      padding: 24px;
+    }
+
+    /* ===================== 统计卡片网格 ===================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--success), transparent);
+    }
+
+    .stat-card.warning::before {
+      background: linear-gradient(90deg, var(--warning), transparent);
+    }
+
+    .stat-card.info::before {
+      background: linear-gradient(90deg, var(--info), transparent);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .stat-change {
+      font-size: 12px;
+      margin-top: 8px;
+      color: var(--success);
+    }
+
+    .stat-change.up { color: var(--success); }
+    .stat-change.down { color: var(--danger); }
+
+    /* ===================== 面板卡片 ===================== */
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    /* ===================== 按钮 ===================== */
+    .btn {
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--success), #22c55e);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--primary-light);
+      color: var(--text);
+      border: 1px solid var(--border-light);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-hover);
+      color: var(--text);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ===================== 筛选栏 ===================== */
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-bar select, .filter-bar input {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .filter-bar select:focus, .filter-bar input:focus {
+      outline: none;
+      border-color: var(--success);
+    }
+
+    .filter-bar select {
+      min-width: 140px;
+      cursor: pointer;
+    }
+
+    .filter-bar input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-input-wrapper input {
+      padding-left: 40px;
+    }
+
+    .search-input-wrapper::before {
+      content: '🔍';
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      opacity: 0.5;
+    }
+
+    /* ===================== 表格 ===================== */
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      text-align: left;
+      padding: 14px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-input);
+      white-space: nowrap;
+    }
+
+    .table td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .table tr:hover td {
+      background: rgba(45, 90, 71, 0.1);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table-image {
+      width: 60px;
+      height: 40px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: var(--bg-input);
+    }
+
+    /* ===================== 状态徽章 ===================== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      gap: 4px;
+    }
+
+    .badge-success { background: var(--success-bg); color: var(--success); }
+    .badge-warning { background: var(--warning-bg); color: var(--warning); }
+    .badge-danger { background: var(--danger-bg); color: var(--danger); }
+    .badge-info { background: var(--info-bg); color: var(--info); }
+
+    /* ===================== 操作按钮组 ===================== */
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      border-color: var(--success);
+      color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .action-btn.danger:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: var(--danger-bg);
+    }
+
+    /* ===================== Modal ===================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow: hidden;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.3s;
+    }
+
+    .modal-overlay.show .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .modal-body {
+      padding: 24px;
+      max-height: calc(90vh - 140px);
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      background: var(--bg-input);
+    }
+
+    /* ===================== 表单 ===================== */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .form-label.required::after {
+      content: '*';
+      color: var(--danger);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--success);
+      box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+    }
+
+    .form-control::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* ===================== 图片上传 ===================== */
+    .image-upload {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .image-upload-preview {
+      width: 160px;
+      height: 100px;
+      border-radius: var(--radius-sm);
+      border: 2px dashed var(--border);
+      background: var(--bg-input);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .image-upload-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-upload-preview.has-image {
+      border-style: solid;
+      border-color: var(--success);
+    }
+
+    .image-upload-placeholder {
+      color: var(--text-muted);
+      font-size: 32px;
+    }
+
+    .image-upload-info {
+      flex: 1;
+    }
+
+    .image-upload-info p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .image-upload-input {
+      display: none;
+    }
+
+    .image-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .image-upload-btn:hover {
+      background: var(--primary-hover);
+      border-color: var(--success);
+    }
+
+    /* ===================== 空状态 ===================== */
+    .empty-state {
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 18px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    /* ===================== 加载状态 ===================== */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 64px;
+      color: var(--text-secondary);
+    }
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--success);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===================== Toast ===================== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+      max-width: 360px;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success { border-color: var(--success); }
+    .toast.error { border-color: var(--danger); }
+    .toast.warning { border-color: var(--warning); }
+
+    .toast-icon {
+      font-size: 18px;
+    }
+
+    /* ===================== 核销区 ===================== */
+    .verify-section {
+      max-width: 600px;
+    }
+
+    .verify-input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .verify-input-group input {
+      flex: 1;
+      font-family: monospace;
+      font-size: 20px;
+      letter-spacing: 4px;
+      text-align: center;
+    }
+
+    .verify-history {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .verify-item {
+      background: var(--success-bg);
+      border: 1px solid var(--success);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+    }
+
+    .verify-item-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--success);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #000;
+    }
+
+    .verify-item-info {
+      flex: 1;
+    }
+
+    .verify-item-code {
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .verify-item-detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .verify-item-time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ===================== 用户管理 ===================== */
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .user-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .user-item-avatar {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .user-item-info {
+      flex: 1;
+    }
+
+    .user-item-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .user-item-meta {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .user-item-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* ===================== 响应式 ===================== */
+    @media (max-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+      }
+
+      .filter-bar select, .filter-bar input {
+        width: 100%;
+      }
+
+      .modal {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+    }
+
+    /* ===================== 滚动条 ===================== */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-input);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-light);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-light);
+    }
+
+    /* ===================== 富文本编辑器 ===================== */
+    .rich-editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 8px 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+
+    .rich-editor-toolbar button {
+      width: 32px;
+      height: 32px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .rich-editor-toolbar button:hover {
+      background: var(--bg-hover);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .rich-editor-toolbar button.active {
+      background: var(--primary-light);
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .rich-editor-toolbar .toolbar-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+      margin: 4px 4px;
+    }
+
+    .rich-editor-content {
+      min-height: 160px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      background: var(--bg-input);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.7;
+      outline: none;
+    }
+
+    .rich-editor-content:focus {
+      border-color: var(--success);
+      box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+    }
+
+    .rich-editor-content:empty::before {
+      content: attr(data-placeholder);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .rich-editor-content img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin: 8px 0;
+    }
+
+    .rich-editor-content a {
+      color: var(--info);
+      text-decoration: underline;
+    }
+
+    .rich-editor-content ul, .rich-editor-content ol {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+
+    /* ===================== 地图标注 ===================== */
+    .location-section {
+      margin-top: 16px;
+    }
+
+    .location-search {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .location-search input {
+      flex: 1;
+    }
+
+    .location-search button {
+      flex-shrink: 0;
+    }
+
+    .location-results {
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-input);
+      margin-bottom: 12px;
+    }
+
+    .location-result-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .location-result-item:last-child {
+      border-bottom: none;
+    }
+
+    .location-result-item:hover {
+      background: var(--bg-hover);
+    }
+
+    .location-result-item .result-title {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .location-result-item .result-address {
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .location-map-preview {
+      height: 180px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .location-map-preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: var(--radius-sm);
+    }
+
+    .location-coords {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .location-coords span {
+      background: var(--bg-input);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* ===================== 隐藏 ===================== */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- ===================== 登录页 ===================== -->
+<div id="login-page" class="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">🎫</div>
+      <div class="login-title">易票管理系统</div>
+      <div class="login-subtitle">请登录以继续</div>
+    </div>
+
+    <form class="login-form" onsubmit="handleLogin(event)">
+      <div class="login-error" id="login-error"></div>
+
+      <div class="form-group">
+        <label class="form-label">用户名</label>
+        <input type="text" class="form-control" id="login-username" placeholder="请输入用户名" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input type="password" class="form-control" id="login-password" placeholder="请输入密码" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+        登录
+      </button>
+    </form>
+
+    <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+      <p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 12px;">默认账号</p>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn btn-ghost btn-sm" style="flex: 1;" onclick="fillDemo('admin', 'admin123')">管理员</button>
+        <button type="button" class="btn btn-ghost btn-sm" style="flex: 1;" onclick="fillDemo('operator', 'op123')">操作员</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 主应用 ===================== -->
+<div id="app-layout" class="app-layout hidden">
+
+  <!-- 侧边栏 -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">🎫</div>
+      <span class="sidebar-brand-text">易票管理</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">数据中心</div>
+        <button class="nav-item active" data-tab="stats" onclick="switchTab('stats')">
+          <span class="nav-item-icon">📊</span>
+          <span>数据统计</span>
+        </button>
+        <button class="nav-item" data-tab="orders" onclick="switchTab('orders')">
+          <span class="nav-item-icon">📋</span>
+          <span>订单管理</span>
+        </button>
+        <button class="nav-item" data-tab="verify" onclick="switchTab('verify')">
+          <span class="nav-item-icon">✓</span>
+          <span>票券核销</span>
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-title">内容管理</div>
+        <button class="nav-item" data-tab="expos" onclick="switchTab('expos')">
+          <span class="nav-item-icon">🏛️</span>
+          <span>展会管理</span>
+        </button>
+        <button class="nav-item" data-tab="tickets-type" onclick="switchTab('tickets-type')">
+          <span class="nav-item-icon">🎫</span>
+          <span>票种配置</span>
+        </button>
+      </div>
+
+      <div class="nav-section" id="admin-section">
+        <div class="nav-section-title">系统</div>
+        <button class="nav-item" data-tab="users" onclick="switchTab('users')">
+          <span class="nav-item-icon">👥</span>
+          <span>用户管理</span>
+        </button>
+        <button class="nav-item" data-tab="settings" onclick="switchTab('settings')">
+          <span class="nav-item-icon">⚙️</span>
+          <span>系统设置</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" id="user-avatar">👤</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="user-name">-</div>
+          <div class="sidebar-user-role" id="user-role">-</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <span>🚪</span>
+        <span>退出登录</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="main-content">
+    <header class="topbar">
+      <h1 class="topbar-title" id="page-title">数据统计</h1>
+      <div class="topbar-actions">
+        <button class="config-btn" onclick="showConfigModal()">
+          <span>⚙️</span>
+          <span>环境配置</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- ===================== 数据统计 ===================== -->
+      <div id="tab-stats" class="tab-content">
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">
+              <span>📋</span>
+              <span>总订单数</span>
+            </div>
+            <div class="stat-value" id="stat-total">-</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-label">
+              <span>📅</span>
+              <span>今日订单</span>
+            </div>
+            <div class="stat-value" id="stat-today">-</div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-label">
+              <span>💰</span>
+              <span>总销售额</span>
+            </div>
+            <div class="stat-value" id="stat-revenue">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">
+              <span>🏛️</span>
+              <span>展会数量</span>
+            </div>
+            <div class="stat-value" id="stat-expos">-</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>📈</span>
+              <span>各展会销售数据</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div id="expo-stats-table"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 展会管理 ===================== -->
+      <div id="tab-expos" class="tab-content hidden">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>🏛️</span>
+              <span>展会列表</span>
+            </div>
+            <button class="btn btn-primary" onclick="showExpoModal()">
+              <span>+</span>
+              <span>新增展会</span>
+            </button>
+          </div>
+          <div class="panel-body">
+            <div class="filter-bar">
+              <select id="expo-filter-status" onchange="loadExpos()">
+                <option value="">全部状态</option>
+                <option value="active">上架</option>
+                <option value="inactive">下架</option>
+                <option value="draft">草稿</option>
+              </select>
+              <div class="search-input-wrapper">
+                <input type="text" id="expo-search" placeholder="搜索展会名称..." oninput="loadExpos()">
+              </div>
+            </div>
+            <div id="expos-table"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 票种配置 ===================== -->
+      <div id="tab-tickets-type" class="tab-content hidden">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>🎫</span>
+              <span>票种配置</span>
+            </div>
+            <button class="btn btn-primary" onclick="showTicketTypeModal()">
+              <span>+</span>
+              <span>新增票种</span>
+            </button>
+          </div>
+          <div class="panel-body">
+            <div class="filter-bar">
+              <select id="ticket-type-filter-expo" onchange="loadTicketTypes()">
+                <option value="">全部展会</option>
+              </select>
+              <select id="ticket-type-filter-status" onchange="loadTicketTypes()">
+                <option value="">全部状态</option>
+                <option value="active">上架</option>
+                <option value="inactive">下架</option>
+              </select>
+            </div>
+            <div id="ticket-types-table"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 订单管理 ===================== -->
+      <div id="tab-orders" class="tab-content hidden">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>📋</span>
+              <span>订单列表</span>
+            </div>
+            <button class="btn btn-secondary" onclick="loadOrders()">
+              <span>🔄</span>
+              <span>刷新</span>
+            </button>
+          </div>
+          <div class="panel-body">
+            <div class="filter-bar">
+              <select id="order-filter-expo" onchange="loadOrders()">
+                <option value="">全部展会</option>
+              </select>
+              <select id="order-filter-status" onchange="loadOrders()">
+                <option value="">全部状态</option>
+                <option value="valid">有效</option>
+                <option value="used">已核销</option>
+                <option value="expired">已过期</option>
+              </select>
+              <div class="search-input-wrapper">
+                <input type="text" id="order-search" placeholder="搜索订单号/手机号..." oninput="loadOrders()">
+              </div>
+            </div>
+            <div id="orders-table"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 票券核销 ===================== -->
+      <div id="tab-verify" class="tab-content hidden">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>✓</span>
+              <span>票券核销</span>
+            </div>
+          </div>
+          <div class="panel-body verify-section">
+            <div class="verify-input-group">
+              <input type="text" class="form-control" id="verify-code-input" placeholder="输入核销码" maxlength="8">
+              <button class="btn btn-primary" onclick="verifyTicketManual()">核销</button>
+            </div>
+            <div id="verify-history"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 用户管理 ===================== -->
+      <div id="tab-users" class="tab-content hidden">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>👥</span>
+              <span>用户管理</span>
+            </div>
+            <button class="btn btn-primary" onclick="showUserModal()">
+              <span>+</span>
+              <span>添加用户</span>
+            </button>
+          </div>
+          <div class="panel-body">
+            <div id="users-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== 系统设置 ===================== -->
+      <div id="tab-settings" class="tab-content hidden">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>⚙️</span>
+              <span>系统设置</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">默认管理员账号</label>
+              <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">
+                用户名: <code style="background: var(--bg-input); padding: 2px 8px; border-radius: 4px;">admin</code> / 密码: <code style="background: var(--bg-input); padding: 2px 8px; border-radius: 4px;">admin123</code>
+              </p>
+              <p style="color: var(--text-secondary); font-size: 14px;">
+                操作员: <code style="background: var(--bg-input); padding: 2px 8px; border-radius: 4px;">operator</code> / 密码: <code style="background: var(--bg-input); padding: 2px 8px; border-radius: 4px;">op123</code>
+              </p>
+            </div>
+            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+              <h4 style="margin-bottom: 16px; color: var(--text);">权限说明</h4>
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                <div style="background: var(--bg-input); padding: 16px; border-radius: 8px;">
+                  <div style="font-weight: 600; margin-bottom: 8px; color: var(--success);">👑 管理员</div>
+                  <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 16px;">
+                    <li>所有操作权限</li>
+                    <li>用户管理</li>
+                    <li>系统设置</li>
+                  </ul>
+                </div>
+                <div style="background: var(--bg-input); padding: 16px; border-radius: 8px;">
+                  <div style="font-weight: 600; margin-bottom: 8px; color: var(--info);">👤 操作员</div>
+                  <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 16px;">
+                    <li>数据查看</li>
+                    <li>订单管理</li>
+                    <li>展会/票种配置</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ===================== 弹窗：新增/编辑展会 ===================== -->
+<div class="modal-overlay" id="expo-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="expo-modal-title">
+        <span>🏛️</span>
+        <span>新增展会</span>
+      </div>
+      <button class="modal-close" onclick="closeExpoModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="expo-id">
+      <div class="form-group">
+        <label class="form-label required">展会名称</label>
+        <input type="text" class="form-control" id="expo-name" placeholder="如：2026芒果车展">
+      </div>
+      <div class="form-group">
+        <label class="form-label">副标题</label>
+        <input type="text" class="form-control" id="expo-subtitle" placeholder="如：国庆黄金周 · 湖南国际会展中心">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">开始日期</label>
+          <input type="date" class="form-control" id="expo-start-date">
+        </div>
+        <div class="form-group">
+          <label class="form-label required">结束日期</label>
+          <input type="date" class="form-control" id="expo-end-date">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">展馆名称</label>
+          <input type="text" class="form-control" id="expo-venue" placeholder="如：湖南国际会展中心">
+        </div>
+        <div class="form-group">
+          <label class="form-label">展馆地址</label>
+          <input type="text" class="form-control" id="expo-location" placeholder="详细地址">
+        </div>
+      </div>
+
+      <!-- 地图标注 -->
+      <div class="location-section">
+        <label class="form-label">地图定位</label>
+        <div class="location-search">
+          <input type="text" class="form-control" id="location-search-input" placeholder="输入地址搜索位置...">
+          <button class="btn btn-secondary btn-sm" type="button" onclick="searchLocation()">🔍 搜索</button>
+        </div>
+        <div class="location-results" id="location-results" style="display:none;"></div>
+        <div class="location-map-preview" id="location-map-preview">
+          <span id="map-placeholder-text">搜索地址后在地图上预览位置</span>
+        </div>
+        <div class="location-coords">
+          <span>经度：<em id="coord-lng">-</em></span>
+          <span>纬度：<em id="coord-lat">-</em></span>
+          <span id="map-provider-hint" style="margin-left:auto; font-size:11px;">无需 API Key · 腾讯地图</span>
+        </div>
+        <input type="hidden" id="expo-coords">
+      </div>
+      <div class="form-group">
+        <label class="form-label">封面图</label>
+        <div class="image-upload">
+          <div class="image-upload-preview" id="expo-poster-preview">
+            <span class="image-upload-placeholder">🖼️</span>
+          </div>
+          <div class="image-upload-info">
+            <p>支持 JPG/PNG，建议尺寸 750×400</p>
+            <label class="image-upload-btn" for="expo-poster-input">
+              <span>📤</span>
+              <span>选择图片</span>
+            </label>
+            <input type="file" class="image-upload-input" id="expo-poster-input" accept="image/*" onchange="handleImageUpload(this, 'expo-poster-preview', 'expo-poster')">
+          </div>
+        </div>
+        <input type="hidden" id="expo-poster">
+      </div>
+      <div class="form-group">
+        <label class="form-label">展会描述（支持图片）</label>
+        <!-- 富文本工具栏 -->
+        <div class="rich-editor-toolbar">
+          <button type="button" onclick="execCmd('bold')" title="加粗"><b>B</b></button>
+          <button type="button" onclick="execCmd('italic')" title="斜体"><i>I</i></button>
+          <button type="button" onclick="execCmd('underline')" title="下划线"><u>U</u></button>
+          <div class="toolbar-divider"></div>
+          <button type="button" onclick="execCmd('insertUnorderedList')" title="无序列表">•</button>
+          <button type="button" onclick="execCmd('insertOrderedList')" title="有序列表">1.</button>
+          <div class="toolbar-divider"></div>
+          <button type="button" onclick="insertLink()" title="插入链接">🔗</button>
+          <button type="button" onclick="insertImage()" title="插入图片">🖼️</button>
+          <div class="toolbar-divider"></div>
+          <button type="button" onclick="execCmd('formatBlock', '<h3>')" title="大标题" style="font-size:12px;">H3</button>
+          <button type="button" onclick="execCmd('formatBlock', '<p>')" title="正文" style="font-size:12px;">P</button>
+          <div class="toolbar-divider"></div>
+          <button type="button" onclick="execCmd('removeFormat')" title="清除格式">🗑️</button>
+        </div>
+        <!-- 可编辑内容区 -->
+        <div
+          class="rich-editor-content"
+          id="expo-description"
+          contenteditable="true"
+          data-placeholder="输入展会介绍，支持文字、图片、链接..."
+          oninput="onEditorInput()"
+        ></div>
+        <input type="hidden" id="expo-description-html">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <select class="form-control" id="expo-status">
+            <option value="active">上架</option>
+            <option value="inactive">下架</option>
+            <option value="draft">草稿</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">排序权重</label>
+          <input type="number" class="form-control" id="expo-sort" value="100" min="0">
+          <div class="form-hint">数值越大越靠前</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeExpoModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveExpo()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 弹窗：新增/编辑票种 ===================== -->
+<div class="modal-overlay" id="ticket-type-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="ticket-type-modal-title">
+        <span>🎫</span>
+        <span>新增票种</span>
+      </div>
+      <button class="modal-close" onclick="closeTicketTypeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ticket-type-id">
+      <div class="form-group">
+        <label class="form-label required">关联展会</label>
+        <select class="form-control" id="ticket-type-expo">
+          <option value="">请选择展会</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label required">票种名称</label>
+        <input type="text" class="form-control" id="ticket-type-name" placeholder="如：普通票、早鸟票、VIP票">
+      </div>
+      <div class="form-group">
+        <label class="form-label">票种描述</label>
+        <textarea class="form-control" id="ticket-type-desc" rows="2" placeholder="使用说明..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">售价（元）</label>
+          <input type="number" class="form-control" id="ticket-type-price" value="0" min="0" step="0.01">
+          <div class="form-hint">0 表示免费票</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">划线价（元）</label>
+          <input type="number" class="form-control" id="ticket-type-original-price" value="0" min="0" step="0.01">
+          <div class="form-hint">显示原价（划掉）</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">库存数量</label>
+          <input type="number" class="form-control" id="ticket-type-inventory" value="1000" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">已售数量</label>
+          <input type="number" class="form-control" id="ticket-type-sold" value="0" min="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">状态</label>
+          <select class="form-control" id="ticket-type-status">
+            <option value="active">上架</option>
+            <option value="inactive">下架</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">排序</label>
+          <input type="number" class="form-control" id="ticket-type-sort" value="10" min="0">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeTicketTypeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveTicketType()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 弹窗：环境配置 ===================== -->
+<div class="modal-overlay" id="config-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>⚙️</span>
+        <span>云开发环境配置</span>
+      </div>
+      <button class="modal-close" onclick="closeConfigModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">后端服务地址</label>
+        <input type="url" class="form-control" id="config-base-url" placeholder="https://express-rzac-xxx.sh.run.tcloudbase.com">
+        <div class="form-hint">Express 后端服务地址，如已部署请填入</div>
+      </div>
+      <div style="background: var(--warning-bg); border: 1px solid var(--warning); padding: 16px; border-radius: 8px; margin-top: 16px;">
+        <p style="color: var(--warning); font-size: 13px; margin-bottom: 8px;">💡 提示</p>
+        <p style="color: var(--text-secondary); font-size: 13px;">首次使用需先部署后端服务，然后再填入地址。</p>
+        <p style="color: var(--text-secondary); font-size: 13px; margin-top: 8px;">后端代码位于 <code style="color:var(--success);">admin/backend/</code> 目录</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeConfigModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveConfig()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 弹窗：添加/编辑用户 ===================== -->
+<div class="modal-overlay" id="user-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>👤</span>
+        <span>添加用户</span>
+      </div>
+      <button class="modal-close" onclick="closeUserModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="user-edit-id">
+      <div class="form-group">
+        <label class="form-label required">用户名</label>
+        <input type="text" class="form-control" id="user-username" placeholder="登录用户名">
+      </div>
+      <div class="form-group">
+        <label class="form-label" id="user-password-label">密码</label>
+        <input type="password" class="form-control" id="user-password" placeholder="登录密码">
+        <div class="form-hint" id="user-password-hint">留空则保持原密码</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">角色</label>
+        <select class="form-control" id="user-role-select">
+          <option value="operator">操作员</option>
+          <option value="admin">管理员</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">显示名称</label>
+        <input type="text" class="form-control" id="user-display-name" placeholder="用于显示的名称">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeUserModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveUser()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast 容器 -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="admin-api.js"></script>
+<script>
+// ===================== 全局状态 =====================
+let currentUser = null
+let currentTab = 'stats'
+let exposData = []
+let ticketTypesData = []
+let ordersData = []
+let usersData = []
+
+// 角色权限映射
+const PERMISSIONS = {
+  admin: ['stats', 'expos', 'tickets-type', 'orders', 'verify', 'users', 'settings'],
+  operator: ['stats', 'expos', 'tickets-type', 'orders', 'verify']
+}
+
+// 默认用户（可扩展为从后端加载）
+const DEFAULT_USERS = [
+  { id: '1', username: 'admin', password: 'admin123', role: 'admin', displayName: '超级管理员' },
+  { id: '2', username: 'operator', password: 'op123', role: 'operator', displayName: '运营人员' }
+]
+
+// ===================== 初始化 =====================
+document.addEventListener('DOMContentLoaded', async () => {
+  // 读取后端地址并初始化 API
+  const savedBaseUrl = localStorage.getItem('yipiao_admin_base_url')
+  if (savedBaseUrl) {
+    BASE_URL = savedBaseUrl.replace(/\/$/, '')
+    try {
+      await api.init({ baseUrl: BASE_URL })
+    } catch (e) {
+      console.warn('[易票] API 初始化失败', e)
+    }
+  }
+
+  // 检查是否已登录
+  const savedUser = localStorage.getItem('yipiao_admin_user')
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser)
+    showApp()
+  } else {
+    showLogin()
+  }
+
+  // 回车触发核销
+  document.getElementById('verify-code-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') verifyTicketManual()
+  })
+})
+
+// ===================== 登录/登出 =====================
+function showLogin() {
+  document.getElementById('login-page').classList.remove('hidden')
+  document.getElementById('app-layout').classList.add('hidden')
+}
+
+function showApp() {
+  document.getElementById('login-page').classList.add('hidden')
+  document.getElementById('app-layout').classList.remove('hidden')
+
+  // 更新用户信息
+  document.getElementById('user-name').textContent = currentUser.displayName || currentUser.username
+  document.getElementById('user-role').textContent = currentUser.role === 'admin' ? '管理员' : '操作员'
+
+  // 根据权限显示菜单
+  const permissions = PERMISSIONS[currentUser.role] || []
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const tab = item.dataset.tab
+    if (tab && !permissions.includes(tab)) {
+      item.style.display = 'none'
+    }
+  })
+
+  // 加载统计数据
+  loadStats()
+}
+
+function fillDemo(username, password) {
+  document.getElementById('login-username').value = username
+  document.getElementById('login-password').value = password
+}
+
+async function handleLogin(e) {
+  e.preventDefault()
+  const username = document.getElementById('login-username').value.trim()
+  const password = document.getElementById('login-password').value
+
+  if (!BASE_URL) {
+    const errorEl = document.getElementById('login-error')
+    errorEl.textContent = '请先在右上角「⚙️」配置后端服务地址'
+    errorEl.classList.add('show')
+    setTimeout(() => errorEl.classList.remove('show'), 4000)
+    return
+  }
+
+  try {
+    const user = await api.login(username, password)
+    currentUser = user
+    localStorage.setItem('yipiao_admin_user', JSON.stringify(currentUser))
+    showApp()
+  } catch (e) {
+    const errorEl = document.getElementById('login-error')
+    errorEl.textContent = e.message || '登录失败，请检查后端服务'
+    errorEl.classList.add('show')
+    setTimeout(() => errorEl.classList.remove('show'), 3000)
+  }
+}
+
+function logout() {
+  localStorage.removeItem('yipiao_admin_user')
+  currentUser = null
+  location.reload()
+}
+
+// ===================== Tab 切换 =====================
+function switchTab(tab) {
+  // 权限检查
+  const permissions = PERMISSIONS[currentUser.role] || []
+  if (!permissions.includes(tab)) {
+    showToast('您没有访问该页面的权限', 'error')
+    return
+  }
+
+  currentTab = tab
+
+  // 切换导航高亮
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.tab === tab)
+  })
+
+  // 切换内容
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.add('hidden')
+  })
+  document.getElementById(`tab-${tab}`).classList.remove('hidden')
+
+  // 更新标题
+  const titles = {
+    stats: '数据统计',
+    expos: '展会管理',
+    'tickets-type': '票种配置',
+    orders: '订单管理',
+    verify: '票券核销',
+    users: '用户管理',
+    settings: '系统设置'
+  }
+  document.getElementById('page-title').textContent = titles[tab] || ''
+
+  // 加载对应数据
+  switch (tab) {
+    case 'stats': loadStats(); break
+    case 'expos': loadExpos(); break
+    case 'tickets-type': loadTicketTypes(); break
+    case 'orders': loadOrders(); break
+    case 'verify': break
+    case 'users': loadUsers(); break
+    case 'settings': break
+  }
+}
+
+// ===================== Toast =====================
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toast-container')
+  const toast = document.createElement('div')
+  toast.className = `toast ${type}`
+
+  const icons = { success: '✓', error: '✗', warning: '⚠' }
+  toast.innerHTML = `
+    <span class="toast-icon">${icons[type] || icons.success}</span>
+    <span>${message}</span>
+  `
+
+  container.appendChild(toast)
+
+  // 触发动画
+  requestAnimationFrame(() => toast.classList.add('show'))
+
+  // 自动移除
+  setTimeout(() => {
+    toast.classList.remove('show')
+    setTimeout(() => toast.remove(), 300)
+  }, 3000)
+}
+
+// ===================== 图片上传 =====================
+function handleImageUpload(input, previewId, hiddenId) {
+  const file = input.files[0]
+  if (!file) return
+
+  const reader = new FileReader()
+  reader.onload = e => {
+    const preview = document.getElementById(previewId)
+    preview.innerHTML = `<img src="${e.target.result}" alt="预览">`
+    preview.classList.add('has-image')
+    document.getElementById(hiddenId).value = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
+
+// ===================== 富文本编辑器 =====================
+function execCmd(cmd, value = null) {
+  document.execCommand(cmd, false, value)
+  document.getElementById('expo-description').focus()
+}
+
+function onEditorInput() {
+  // 实时更新隐藏字段（可扩展）
+}
+
+function insertLink() {
+  const url = prompt('请输入链接地址：')
+  if (url) {
+    execCmd('createLink', url)
+  }
+}
+
+function insertImage() {
+  const url = prompt('请输入图片地址：')
+  if (url) {
+    execCmd('insertImage', url)
+  }
+}
+
+// ===================== 地图标注 =====================
+async function searchLocation() {
+  const keyword = document.getElementById('location-search-input').value.trim()
+  if (!keyword) {
+    showToast('请输入地址关键词', 'error')
+    return
+  }
+
+  const resultsEl = document.getElementById('location-results')
+  resultsEl.innerHTML = '<div style="padding:12px;color:var(--text-muted);font-size:13px;">🔄 搜索中...</div>'
+  resultsEl.style.display = 'block'
+
+  try {
+    // 使用 Nominatim 开放 API（OpenStreetMap，免费无需 Key）
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(keyword)}&limit=5&accept-language=zh`,
+      { headers: { 'Accept-Language': 'zh' } }
+    )
+    const data = await res.json()
+
+    if (!data || data.length === 0) {
+      resultsEl.innerHTML = '<div style="padding:12px;color:var(--text-muted);font-size:13px;">未找到相关地址</div>'
+      return
+    }
+
+    resultsEl.innerHTML = data.map(item => `
+      <div class="location-result-item" onclick="selectLocation(${item.lon}, ${item.lat}, '${item.display_name.replace(/'/g, "\\'")}')">
+        <div class="result-title">${item.display_name.split(',').slice(0, 3).join(',')}</div>
+        <div class="result-address">${item.display_name}</div>
+      </div>
+    `).join('')
+
+  } catch (e) {
+    resultsEl.innerHTML = '<div style="padding:12px;color:var(--danger);font-size:13px;">搜索失败，请重试</div>'
+  }
+}
+
+function selectLocation(lng, lat, name) {
+  document.getElementById('expo-location').value = name.split(',').slice(0, 3).join(',')
+  document.getElementById('expo-coords').value = `${lng},${lat}`
+  document.getElementById('coord-lng').textContent = lng.toFixed(6)
+  document.getElementById('coord-lat').textContent = lat.toFixed(6)
+  document.getElementById('location-results').style.display = 'none'
+
+  renderMap(lng, lat)
+  showToast('位置已定位')
+}
+
+function renderMap(lng, lat) {
+  const preview = document.getElementById('location-map-preview')
+  // 使用 OpenStreetMap 的静态图 API
+  const zoom = 16
+  const size = '640,300'
+  const marker = `icon:circle|color:0x4ade80|size:mid|coord=${lat},${lng}`
+  const url = `https://static-maps.yandex.ru/1.x/?ll=${lng},${lat}&z=${zoom}&l=map&size=${size}`
+
+  // 改用 Leaflet 嵌入式地图（无需 API Key）
+  preview.innerHTML = `
+    <div id="leaflet-map" style="width:100%;height:100%;border-radius:8px;"></div>
+  `
+
+  // 动态加载 Leaflet CSS/JS
+  if (!window.L) {
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+    document.head.appendChild(link)
+
+    const script = document.createElement('script')
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+    script.onload = () => initLeafletMap(lng, lat)
+    document.head.appendChild(script)
+  } else {
+    initLeafletMap(lng, lat)
+  }
+}
+
+function initLeafletMap(lng, lat) {
+  const container = document.getElementById('leaflet-map')
+  if (!container || container._map) return
+
+  const map = L.map(container, { zoomControl: false, attributionControl: false }).setView([lat, lng], 16)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(map)
+
+  // 绿色自定义标注
+  const greenIcon = L.divIcon({
+    html: `<div style="background:#4ade80;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+    className: ''
+  })
+
+  L.marker([lat, lng], { icon: greenIcon }).addTo(map)
+  container._map = map
+}
+
+// ===================== 数据统计 =====================
+async function loadStats() {
+  if (!BASE_URL) {
+    document.getElementById('stat-total').textContent = '需配置'
+    document.getElementById('stat-today').textContent = '需配置'
+    document.getElementById('stat-revenue').textContent = '需配置'
+    document.getElementById('stat-expos').textContent = '需配置'
+    document.getElementById('expo-stats-table').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">请先配置后端服务地址</td></tr>'
+    return
+  }
+
+  try {
+    const stats = await api.getStats()
+
+    document.getElementById('stat-total').textContent = stats.totalOrders || 0
+    document.getElementById('stat-today').textContent = stats.todayOrders || 0
+    document.getElementById('stat-revenue').textContent = `¥${(stats.revenue || 0).toFixed(2)}`
+    document.getElementById('stat-expos').textContent = stats.expoCount || 0
+
+    // 各展会统计
+    if (!stats.expoStats || stats.expoStats.length === 0) {
+      document.getElementById('expo-stats-table').innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">暂无展会数据</td></tr>'
+    } else {
+      document.getElementById('expo-stats-table').innerHTML = stats.expoStats.map(e =>
+        `<tr><td><strong>${e.name}</strong></td><td>-</td><td>${e.ticketCount}</td><td style="color:var(--success)">¥${(e.revenue || 0).toFixed(2)}</td></tr>`
+      ).join('')
+    }
+  } catch (e) {
+    console.error('加载统计失败', e)
+    showToast('加载失败：' + e.message, 'error')
+  }
+}
+
+// ===================== 展会管理 =====================
+async function loadExpos() {
+  if (!BASE_URL) {
+    document.getElementById('expos-table').innerHTML = '<div class="empty-state"><p style="color:var(--warning)">⚠️ 请先在右上角「⚙️」配置后端服务地址</p></div>'
+    return
+  }
+
+  document.getElementById('expos-table').innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>'
+
+  try {
+    const status = document.getElementById('expo-filter-status').value
+    const search = document.getElementById('expo-search')?.value || ''
+    exposData = await api.getExpos(status)
+
+    // 过滤搜索
+    if (search) {
+      exposData = exposData.filter(e => e.name.toLowerCase().includes(search.toLowerCase()))
+    }
+
+    if (exposData.length === 0) {
+      document.getElementById('expos-table').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🏛️</div>
+          <h3>暂无展会</h3>
+          <p>创建您的第一个展会开始售票</p>
+          <button class="btn btn-primary" onclick="showExpoModal()">新建展会</button>
+        </div>`
+      return
+    }
+
+    let html = '<div class="table-wrapper"><table class="table"><thead><tr><th>封面</th><th>展会名称</th><th>时间</th><th>地点</th><th>状态</th><th>操作</th></tr></thead><tbody>'
+    for (const expo of exposData) {
+      const statusClass = expo.status === 'active' ? 'badge-success' : expo.status === 'inactive' ? 'badge-danger' : 'badge-warning'
+      const statusText = expo.status === 'active' ? '上架' : expo.status === 'inactive' ? '下架' : '草稿'
+
+      const posterThumb = expo.poster
+        ? `<img class="table-image" src="${expo.poster}" alt="${expo.name}">`
+        : '<div class="table-image" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);">🖼️</div>'
+
+      html += `<tr>
+        <td>${posterThumb}</td>
+        <td><strong>${expo.name}</strong></td>
+        <td>${expo.startDate || '-'} ~ ${expo.endDate || '-'}</td>
+        <td>${expo.venue || expo.location || '-'}</td>
+        <td><span class="badge ${statusClass}">${statusText}</span></td>
+        <td>
+          <div class="action-btns">
+            <button class="action-btn" onclick="editExpo('${expo.id}')" title="编辑">✏️</button>
+            <button class="action-btn ${expo.status === 'active' ? '' : ''}" onclick="toggleExpoStatus('${expo.id}', '${expo.status}')" title="${expo.status === 'active' ? '下架' : '上架'}">${expo.status === 'active' ? '📤' : '📥'}</button>
+            <button class="action-btn danger" onclick="deleteExpo('${expo.id}')" title="删除">🗑️</button>
+          </div>
+        </td>
+      </tr>`
+    }
+    html += '</tbody></table></div>'
+    document.getElementById('expos-table').innerHTML = html
+
+  } catch (e) {
+    if (!BASE_URL) {
+      document.getElementById('expos-table').innerHTML = `<div class="empty-state"><p style="color:var(--warning)">⚠️ 请先配置后端服务地址</p></div>`
+    } else {
+      document.getElementById('expos-table').innerHTML = `<div class="empty-state"><p style="color:var(--danger)">加载失败：${e.message}</p></div>`
+    }
+  }
+}
+
+function showExpoModal(expo = null) {
+  document.getElementById('expo-modal-title').querySelector('span:last-child').textContent = expo ? '编辑展会' : '新增展会'
+  document.getElementById('expo-id').value = expo ? expo.id : ''
+  document.getElementById('expo-name').value = expo ? expo.name : ''
+  document.getElementById('expo-subtitle').value = expo ? expo.subtitle || '' : ''
+  document.getElementById('expo-start-date').value = expo ? (expo.start_date || expo.startDate || '') : ''
+  document.getElementById('expo-end-date').value = expo ? (expo.end_date || expo.endDate || '') : ''
+  document.getElementById('expo-venue').value = expo ? expo.venue || '' : ''
+  document.getElementById('expo-location').value = expo ? expo.location || '' : ''
+  document.getElementById('expo-status').value = expo ? expo.status : 'draft'
+  document.getElementById('expo-sort').value = expo ? expo.sort || 100 : 100
+
+  // 富文本编辑器内容
+  const editor = document.getElementById('expo-description')
+  editor.innerHTML = expo ? (expo.description || '') : ''
+
+  // 封面图
+  const preview = document.getElementById('expo-poster-preview')
+  if (expo && expo.poster) {
+    preview.innerHTML = `<img src="${expo.poster}" alt="封面">`
+    preview.classList.add('has-image')
+    document.getElementById('expo-poster').value = expo.poster
+  } else {
+    preview.innerHTML = '<span class="image-upload-placeholder">🖼️</span>'
+    preview.classList.remove('has-image')
+    document.getElementById('expo-poster').value = ''
+  }
+
+  // 地图坐标
+  if (expo && expo.coords) {
+    document.getElementById('expo-coords').value = expo.coords
+    const [lng, lat] = expo.coords.split(',')
+    document.getElementById('coord-lng').textContent = lng
+    document.getElementById('coord-lat').textContent = lat
+    renderMap(parseFloat(lng), parseFloat(lat))
+  } else {
+    document.getElementById('expo-coords').value = ''
+    document.getElementById('coord-lng').textContent = '-'
+    document.getElementById('coord-lat').textContent = '-'
+    document.getElementById('location-map-preview').innerHTML = '<span id="map-placeholder-text">搜索地址后在地图上预览位置</span>'
+  }
+
+  // 地址自动回填地图
+  if (expo && expo.location && !expo.coords) {
+    document.getElementById('location-search-input').value = expo.location
+  } else {
+    document.getElementById('location-search-input').value = ''
+  }
+  document.getElementById('location-results').style.display = 'none'
+
+  document.getElementById('expo-modal').classList.add('show')
+}
+
+function closeExpoModal() {
+  document.getElementById('expo-modal').classList.remove('show')
+  document.getElementById('expo-poster-input').value = ''
+  document.getElementById('location-results').style.display = 'none'
+  document.getElementById('location-results').innerHTML = ''
+}
+
+async function editExpo(id) {
+  const expo = exposData.find(e => e.id === id)
+  if (expo) showExpoModal(expo)
+}
+
+async function saveExpo() {
+  const id = document.getElementById('expo-id').value
+  const description = document.getElementById('expo-description').innerHTML
+  // 适配 MySQL 后端字段命名（snake_case）
+  const data = {
+    name: document.getElementById('expo-name').value.trim(),
+    subtitle: document.getElementById('expo-subtitle').value.trim(),
+    startDate: document.getElementById('expo-start-date').value,
+    endDate: document.getElementById('expo-end-date').value,
+    venue: document.getElementById('expo-venue').value.trim(),
+    location: document.getElementById('expo-location').value.trim(),
+    poster: document.getElementById('expo-poster').value,
+    description: description,
+    coords: document.getElementById('expo-coords').value,
+    status: document.getElementById('expo-status').value,
+    sort: parseInt(document.getElementById('expo-sort').value) || 0
+  }
+
+  if (!data.name) {
+    showToast('请输入展会名称', 'error')
+    return
+  }
+
+  try {
+    if (id) {
+      await api.updateExpo(id, data)
+      showToast('更新成功')
+    } else {
+      await api.createExpo(data)
+      showToast('创建成功')
+    }
+    closeExpoModal()
+    loadExpos()
+  } catch (e) {
+    if (!BASE_URL) {
+      showToast('请先配置后端服务地址', 'error')
+    } else {
+      showToast('保存失败：' + e.message, 'error')
+    }
+  }
+}
+
+async function toggleExpoStatus(id, currentStatus) {
+  try {
+    await api.toggleExpoStatus(id, currentStatus)
+    showToast('状态已切换')
+    loadExpos()
+  } catch (e) {
+    if (!BASE_URL) {
+      showToast('请先配置后端服务地址', 'error')
+    } else {
+      showToast('操作失败：' + e.message, 'error')
+    }
+  }
+}
+
+async function deleteExpo(id) {
+  if (!confirm('确定删除该展会？此操作不可恢复。')) return
+  try {
+    await api.deleteExpo(id)
+    showToast('已删除')
+    loadExpos()
+  } catch (e) {
+    if (!BASE_URL) {
+      showToast('请先配置后端服务地址', 'error')
+    } else {
+      showToast('删除失败：' + e.message, 'error')
+    }
+  }
+}
+
+// ===================== 票种配置 =====================
+async function loadTicketTypes() {
+  if (!BASE_URL) {
+    document.getElementById('ticket-types-table').innerHTML = '<div class="empty-state"><p style="color:var(--warning)">⚠️ 请先配置后端服务地址</p></div>'
+    return
+  }
+
+  document.getElementById('ticket-types-table').innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>'
+
+  try {
+    const expoId = document.getElementById('ticket-type-filter-expo').value
+    const status = document.getElementById('ticket-type-filter-status').value
+    ticketTypesData = await api.getTicketTypes(expoId, status)
+
+    // 加载展会列表到筛选器
+    const expos = await api.getExpos()
+    const filterExpo = document.getElementById('ticket-type-filter-expo')
+    const formExpo = document.getElementById('ticket-type-expo')
+
+    const filterOptions = ['<option value="">全部展会</option>']
+    const formOptions = ['<option value="">请选择展会</option>']
+    for (const expo of expos) {
+      filterOptions.push(`<option value="${expo._id}">${expo.name}</option>`)
+      formOptions.push(`<option value="${expo._id}">${expo.name}</option>`)
+    }
+    filterExpo.innerHTML = filterOptions.join('')
+    filterExpo.value = expoId
+    formExpo.innerHTML = formOptions.join('')
+
+    if (ticketTypesData.length === 0) {
+      document.getElementById('ticket-types-table').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🎫</div>
+          <h3>暂无票种</h3>
+          <p>为展会添加票种开始售票</p>
+          <button class="btn btn-primary" onclick="showTicketTypeModal()">添加票种</button>
+        </div>`
+      return
+    }
+
+    // 按展会分组展示
+    const grouped = {}
+    for (const t of ticketTypesData) {
+      const expoName = expos.find(e => e._id === t.expoId)?.name || t.expoId
+      if (!grouped[t.expoId]) grouped[t.expoId] = { name: expoName, types: [] }
+      grouped[t.expoId].types.push(t)
+    }
+
+    let html = ''
+    for (const [eid, group] of Object.entries(grouped)) {
+      html += `<div style="margin-bottom:32px;">
+        <h4 style="color:var(--text-secondary);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);">📁 ${group.name}</h4>
+        <div class="table-wrapper"><table class="table">
+          <thead><tr><th>票种名称</th><th>售价</th><th>库存</th><th>已售</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody>`
+      for (const t of group.types) {
+        const statusClass = t.status === 'active' ? 'badge-success' : 'badge-danger'
+        const statusText = t.status === 'active' ? '上架' : '下架'
+        const priceDisplay = t.price === 0 ? '<span style="color:var(--success);">免费</span>' : `¥${t.price}`
+        const originalPrice = t.originalPrice > t.price ? `<s style="color:var(--text-muted);margin-left:4px;">¥${t.originalPrice}</s>` : ''
+
+        html += `<tr>
+          <td><strong>${t.name}</strong></td>
+          <td>${priceDisplay}${originalPrice}</td>
+          <td>${t.inventory || 0}</td>
+          <td>${t.sold || 0}</td>
+          <td><span class="badge ${statusClass}">${statusText}</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn" onclick="editTicketType('${t._id}')" title="编辑">✏️</button>
+              <button class="action-btn" onclick="toggleTicketTypeStatus('${t._id}', '${t.status}')" title="${t.status === 'active' ? '下架' : '上架'}">${t.status === 'active' ? '📤' : '📥'}</button>
+            </div>
+          </td>
+        </tr>`
+      }
+      html += '</tbody></table></div></div>'
+    }
+    document.getElementById('ticket-types-table').innerHTML = html
+
+  } catch (e) {
+    if (!BASE_URL) {
+      document.getElementById('ticket-types-table').innerHTML = `<div class="empty-state"><p style="color:var(--warning)">⚠️ 请先配置后端服务地址</p></div>`
+    } else {
+      document.getElementById('ticket-types-table').innerHTML = `<div class="empty-state"><p style="color:var(--danger)">加载失败：${e.message}</p></div>`
+    }
+  }
+}
+
+function showTicketTypeModal(ticketType = null) {
+  document.getElementById('ticket-type-modal-title').querySelector('span:last-child').textContent = ticketType ? '编辑票种' : '新增票种'
+  document.getElementById('ticket-type-id').value = ticketType ? ticketType._id : ''
+
+  // 设置展会选项
+  const expoSelect = document.getElementById('ticket-type-expo')
+  if (ticketType && expoSelect.querySelector(`option[value="${ticketType.expoId}"]`)) {
+    expoSelect.value = ticketType.expoId
+  } else {
+    expoSelect.value = ''
+  }
+
+  document.getElementById('ticket-type-name').value = ticketType ? ticketType.name : ''
+  document.getElementById('ticket-type-desc').value = ticketType ? ticketType.description || '' : ''
+  document.getElementById('ticket-type-price').value = ticketType ? ticketType.price : 0
+  document.getElementById('ticket-type-original-price').value = ticketType ? ticketType.originalPrice || 0 : 0
+  document.getElementById('ticket-type-inventory').value = ticketType ? ticketType.inventory || 1000 : 1000
+  document.getElementById('ticket-type-sold').value = ticketType ? ticketType.sold || 0 : 0
+  document.getElementById('ticket-type-status').value = ticketType ? ticketType.status : 'active'
+  document.getElementById('ticket-type-sort').value = ticketType ? ticketType.sort || 10 : 10
+
+  document.getElementById('ticket-type-modal').classList.add('show')
+}
+
+function closeTicketTypeModal() {
+  document.getElementById('ticket-type-modal').classList.remove('show')
+}
+
+async function editTicketType(id) {
+  const t = ticketTypesData.find(tt => tt._id === id)
+  if (t) showTicketTypeModal(t)
+}
+
+async function saveTicketType() {
+  const id = document.getElementById('ticket-type-id').value
+  const data = {
+    expoId: document.getElementById('ticket-type-expo').value,
+    name: document.getElementById('ticket-type-name').value.trim(),
+    description: document.getElementById('ticket-type-desc').value.trim(),
+    price: parseFloat(document.getElementById('ticket-type-price').value) || 0,
+    originalPrice: parseFloat(document.getElementById('ticket-type-original-price').value) || 0,
+    inventory: parseInt(document.getElementById('ticket-type-inventory').value) || 0,
+    sold: parseInt(document.getElementById('ticket-type-sold').value) || 0,
+    status: document.getElementById('ticket-type-status').value,
+    sort: parseInt(document.getElementById('ticket-type-sort').value) || 0
+  }
+
+  if (!data.expoId) {
+    showToast('请选择关联展会', 'error')
+    return
+  }
+  if (!data.name) {
+    showToast('请输入票种名称', 'error')
+    return
+  }
+
+  try {
+    if (id) {
+      await api.updateTicketType(id, data)
+      showToast('更新成功')
+    } else {
+      await api.createTicketType(data)
+      showToast('创建成功')
+    }
+    closeTicketTypeModal()
+    loadTicketTypes()
+  } catch (e) {
+    if (!BASE_URL) {
+      showToast('请先配置后端服务地址', 'error')
+    } else {
+      showToast('保存失败：' + e.message, 'error')
+    }
+  }
+}
+
+async function toggleTicketTypeStatus(id, currentStatus) {
+  try {
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
+    await api.updateTicketType(id, { status: newStatus })
+    showToast('状态已切换')
+    loadTicketTypes()
+  } catch (e) {
+    if (!BASE_URL) {
+      showToast('请先配置后端服务地址', 'error')
+    } else {
+      showToast('操作失败：' + e.message, 'error')
+    }
+  }
+}
+
+// ===================== 订单管理 =====================
+async function loadOrders() {
+  if (!BASE_URL) {
+    document.getElementById('orders-table').innerHTML = '<div class="empty-state"><p style="color:var(--warning)">⚠️ 请先配置后端服务地址</p></div>'
+    return
+  }
+
+  document.getElementById('orders-table').innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>'
+
+  try {
+    const expoId = document.getElementById('order-filter-expo').value
+    const status = document.getElementById('order-filter-status').value
+    const search = document.getElementById('order-search')?.value || ''
+
+    const filter = {}
+    if (expoId) filter.expoId = expoId
+    if (status) filter.status = status
+
+    ordersData = await api.getTickets(filter, { limit: 100 })
+
+    // 过滤搜索
+    if (search) {
+      ordersData = ordersData.filter(o =>
+        (o.orderNo || '').toLowerCase().includes(search.toLowerCase()) ||
+        (o.phone || '').includes(search) ||
+        (o.userName || '').toLowerCase().includes(search.toLowerCase())
+      )
+    }
+
+    // 加载展会列表到筛选器
+    const expos = await api.getExpos()
+    const filterExpo = document.getElementById('order-filter-expo')
+    const options = ['<option value="">全部展会</option>']
+    for (const expo of expos) {
+      options.push(`<option value="${expo._id}">${expo.name}</option>`)
+    }
+    filterExpo.innerHTML = options.join('')
+    filterExpo.value = expoId
+
+    if (ordersData.length === 0) {
+      document.getElementById('orders-table').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <h3>暂无订单</h3>
+          <p>当前没有符合条件的订单记录</p>
+        </div>`
+      return
+    }
+
+    let html = '<div class="table-wrapper"><table class="table"><thead><tr><th>订单号</th><th>展会</th><th>票种</th><th>用户</th><th>手机</th><th>数量</th><th>金额</th><th>状态</th><th>核销码</th><th>时间</th></tr></thead><tbody>'
+    for (const order of ordersData) {
+      const statusMap = {
+        valid: ['badge-success', '有效'],
+        used: ['badge-info', '已核销'],
+        expired: ['badge-warning', '已过期']
+      }
+      const [cls, text] = statusMap[order.status] || ['badge-secondary', order.status]
+      const priceDisplay = order.price === 0 ? '<span style="color:var(--success);">免费</span>' : `¥${(order.price || 0) * (order.quantity || 1)}`
+
+      html += `<tr>
+        <td><code style="font-size:12px;background:var(--bg-input);padding:2px 6px;border-radius:4px;">${order.orderNo || order._id?.slice(-8) || '-'}</code></td>
+        <td>${order.expoName || '-'}</td>
+        <td>${order.ticketTypeName || '-'}</td>
+        <td>${order.userName || '-'}</td>
+        <td>${order.phone || '-'}</td>
+        <td>× ${order.quantity || 1}</td>
+        <td>${priceDisplay}</td>
+        <td><span class="badge ${cls}">${text}</span></td>
+        <td><code style="font-size:12px;background:var(--bg-input);padding:2px 6px;border-radius:4px;">${order.verifyCode || '-'}</code></td>
+        <td>${order.createTime ? new Date(order.createTime).toLocaleDateString() : '-'}</td>
+      </tr>`
+    }
+    html += '</tbody></table></div>'
+    document.getElementById('orders-table').innerHTML = html
+
+  } catch (e) {
+    if (!BASE_URL) {
+      document.getElementById('orders-table').innerHTML = `<div class="empty-state"><p style="color:var(--warning)">⚠️ 请先配置后端服务地址</p></div>`
+    } else {
+      document.getElementById('orders-table').innerHTML = `<div class="empty-state"><p style="color:var(--danger)">加载失败：${e.message}</p></div>`
+    }
+  }
+}
+
+// ===================== 核销 =====================
+async function verifyTicketManual() {
+  const code = document.getElementById('verify-code-input').value.trim().toUpperCase()
+  if (!code) {
+    showToast('请输入核销码', 'error')
+    return
+  }
+
+  try {
+    const ticket = await api.verifyTicket(code)
+    showToast(`核销成功：${ticket.userName || '用户'} - ${ticket.ticketTypeName || '票券'}`)
+
+    // 添加到历史
+    const history = document.getElementById('verify-history')
+    const item = document.createElement('div')
+    item.className = 'verify-item'
+    item.innerHTML = `
+      <div class="verify-item-icon">✓</div>
+      <div class="verify-item-info">
+        <div class="verify-item-code">${ticket.verifyCode || code}</div>
+        <div class="verify-item-detail">${ticket.userName || '用户'} · ${ticket.ticketTypeName || '票券'}</div>
+      </div>
+      <div class="verify-item-time">${new Date().toLocaleTimeString()}</div>
+    `
+    history.insertBefore(item, history.firstChild)
+
+    document.getElementById('verify-code-input').value = ''
+    document.getElementById('verify-code-input').focus()
+  } catch (e) {
+    if (!BASE_URL) {
+      showToast('请先配置后端服务地址', 'error')
+    } else {
+      showToast('核销失败：' + e.message, 'error')
+    }
+  }
+}
+
+// ===================== 用户管理 =====================
+function loadUsers() {
+  if (currentUser.role !== 'admin') {
+    document.getElementById('users-list').innerHTML = '<div class="empty-state"><p style="color:var(--danger)">您没有访问权限</p></div>'
+    return
+  }
+
+  const savedUsers = localStorage.getItem('yipiao_admin_users')
+  usersData = savedUsers ? JSON.parse(savedUsers) : DEFAULT_USERS
+
+  if (usersData.length === 0) {
+    document.getElementById('users-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">👥</div>
+        <h3>暂无用户</h3>
+        <button class="btn btn-primary" onclick="showUserModal()">添加用户</button>
+      </div>`
+    return
+  }
+
+  let html = '<div class="user-list">'
+  for (const user of usersData) {
+    const roleClass = user.role === 'admin' ? 'badge-success' : 'badge-info'
+    const roleText = user.role === 'admin' ? '管理员' : '操作员'
+    const avatar = user.role === 'admin' ? '👑' : '👤'
+
+    html += `<div class="user-item">
+      <div class="user-item-avatar">${avatar}</div>
+      <div class="user-item-info">
+        <div class="user-item-name">${user.displayName || user.username}</div>
+        <div class="user-item-meta">@${user.username} · <span class="badge ${roleClass}" style="font-size:11px;">${roleText}</span></div>
+      </div>
+      <div class="user-item-actions">
+        <button class="action-btn" onclick="editUser('${user.id}')" title="编辑">✏️</button>
+        ${user.id !== currentUser.id ? `<button class="action-btn danger" onclick="deleteUser('${user.id}')" title="删除">🗑️</button>` : ''}
+      </div>
+    </div>`
+  }
+  html += '</div>'
+  document.getElementById('users-list').innerHTML = html
+}
+
+function showUserModal(user = null) {
+  document.getElementById('user-edit-id').value = user ? user.id : ''
+  document.getElementById('user-username').value = user ? user.username : ''
+  document.getElementById('user-password').value = ''
+  document.getElementById('user-password-label').textContent = user ? '新密码' : '密码'
+  document.getElementById('user-password-hint').textContent = user ? '留空则保持原密码' : '设置登录密码'
+  document.getElementById('user-role-select').value = user ? user.role : 'operator'
+  document.getElementById('user-display-name').value = user ? user.displayName || '' : ''
+
+  document.getElementById('user-modal').classList.add('show')
+}
+
+function closeUserModal() {
+  document.getElementById('user-modal').classList.remove('show')
+}
+
+function editUser(id) {
+  const user = usersData.find(u => u.id === id)
+  if (user) showUserModal(user)
+}
+
+function saveUser() {
+  const id = document.getElementById('user-edit-id').value
+  const username = document.getElementById('user-username').value.trim()
+  const password = document.getElementById('user-password').value
+  const role = document.getElementById('user-role-select').value
+  const displayName = document.getElementById('user-display-name').value.trim()
+
+  if (!username) {
+    showToast('请输入用户名', 'error')
+    return
+  }
+
+  const savedUsers = localStorage.getItem('yipiao_admin_users')
+  let users = savedUsers ? JSON.parse(savedUsers) : [...DEFAULT_USERS]
+
+  if (id) {
+    // 编辑
+    const index = users.findIndex(u => u.id === id)
+    if (index !== -1) {
+      users[index] = {
+        ...users[index],
+        username,
+        role,
+        displayName: displayName || username
+      }
+      if (password) users[index].password = password
+    }
+  } else {
+    // 新增
+    if (!password) {
+      showToast('请输入密码', 'error')
+      return
+    }
+    if (users.find(u => u.username === username)) {
+      showToast('用户名已存在', 'error')
+      return
+    }
+    users.push({
+      id: Date.now().toString(),
+      username,
+      password,
+      role,
+      displayName: displayName || username
+    })
+  }
+
+  localStorage.setItem('yipiao_admin_users', JSON.stringify(users))
+  showToast(id ? '更新成功' : '添加成功')
+  closeUserModal()
+  loadUsers()
+}
+
+function deleteUser(id) {
+  if (id === currentUser.id) {
+    showToast('不能删除当前登录用户', 'error')
+    return
+  }
+  if (!confirm('确定删除该用户？')) return
+
+  const savedUsers = localStorage.getItem('yipiao_admin_users')
+  let users = savedUsers ? JSON.parse(savedUsers) : [...DEFAULT_USERS]
+  users = users.filter(u => u.id !== id)
+  localStorage.setItem('yipiao_admin_users', JSON.stringify(users))
+
+  showToast('已删除')
+  loadUsers()
+}
+
+// ===================== 环境配置 =====================
+function showConfigModal() {
+  document.getElementById('config-base-url').value = localStorage.getItem('yipiao_admin_base_url') || ''
+  document.getElementById('config-modal').classList.add('show')
+}
+
+function closeConfigModal() {
+  document.getElementById('config-modal').classList.remove('show')
+}
+
+async function saveConfig() {
+  const baseUrl = document.getElementById('config-base-url').value.trim()
+  if (!baseUrl) {
+    showToast('请输入后端服务地址', 'error')
+    return
+  }
+  localStorage.setItem('yipiao_admin_base_url', baseUrl)
+  BASE_URL = baseUrl.replace(/\/$/, '')
+  await api.init({ baseUrl })
+  showToast('配置已保存')
+  closeConfigModal()
+
+  // 重新加载当前 tab
+  switchTab(currentTab)
+}
+</script>
+</body>
+</html>
