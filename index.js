@@ -335,6 +335,13 @@ app.get('/api/health', (req, res) => {
   ok(res, { status: 'ok', time: new Date().toISOString() })
 })
 
+// ==================== 静态文件服务 ====================
+const path = require('path')
+app.use(express.static(path.join(__dirname, '../')))
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../admin.html'))
+})
+
 // ==================== 启动 ====================
 
 const PORT = process.env.PORT || 80
