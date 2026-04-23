@@ -1,44 +1,22 @@
 # 易票管理后台 - Express 后端
 
+基于 CloudBase 数据库的后端服务。
+
 ## 快速部署到 CloudBase
 
-### 方式一：GitHub 一键部署
-
-1. **创建 GitHub 仓库**，把 `backend/` 目录上传（或直接用 GitHub 网页创建）
-2. 进入 [腾讯云 CloudBase](https://console.cloud.tencent.com/tcb)
-3. 新建服务 → 选择「Express.js」模板
-4. 绑定你的 GitHub 仓库，选择 `backend/` 目录
-5. 环境变量填入以下内容：
+### 环境变量
 
 ```
-DB_HOST=10.23.110.168
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=gU3EGYyJ
-DB_NAME=yipiao
+SECRET_ID=你的SecretId
+SECRET_KEY=你的SecretKey
+ENV_ID=prod-d9grg86xj560374dd
 PORT=80
 ```
 
-6. 部署完成后拿到**公网域名**，填入前端管理后台的「⚙️ 环境配置」
+### CloudBase 密钥获取
 
-### 方式二：本地调试
-
-```bash
-cd backend
-npm install
-npm start
-```
-
-访问 `http://localhost:80`
-
----
-
-## 数据库
-
-- **Host**: `10.23.110.168:3306`
-- **用户**: `root`
-- **密码**: `gU3EGYyJ`
-- **数据库名**: `yipiao`（会自动创建）
+1. 进入 [腾讯云控制台](https://console.cloud.tencent.com/cam/capi)
+2. 创建密钥或使用现有密钥
 
 ---
 
@@ -69,3 +47,5 @@ npm start
 
 - **管理员**: `admin` / `admin123`
 - **操作员**: `operator` / `op123`
+
+> 首次登录后请在「用户管理」中初始化默认账号。
