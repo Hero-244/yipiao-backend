@@ -95,6 +95,13 @@ function now() {
   return Date.now()
 }
 
+// ==================== 系统接口 ====================
+
+// 健康检查/版本信息
+app.get('/api/_health', (req, res) => {
+  ok(res, { version: 'v1.0.4', time: new Date().toISOString() })
+})
+
 // ==================== 文件上传接口 ====================
 
 app.post('/api/upload', upload.single('file'), async (req, res) => {
