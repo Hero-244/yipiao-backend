@@ -36,12 +36,38 @@ const _ = db.command
 
 // ==================== 工具函数 ====================
 
-// 把 CloudBase 的 _id 转换成 id，方便前端使用
+// ==================== 工具函数 ====================
+
+// 通用字段映射：snake_case → camelCase
+const FIELD_MAP = {
+  expo_id: 'expoId',
+  order_no: 'orderNo',
+  verify_code: 'verifyCode',
+  ticket_type_id: 'ticketTypeId',
+  user_id: 'userId',
+  create_time: 'createTime',
+  update_time: 'updateTime',
+  original_price: 'originalPrice',
+  inventory: 'inventory',
+  sold: 'sold',
+}
+
+// 把 CloudBase 的 _id 转换成 id，同时做 snake_case → camelCase
+function normalizeItem(item) {
+  const result = { id: item._id }
+  for (const key of Object.keys(item)) {
+    if (key === '_id') continue
+    const mapped = FIELD_MAP[key] || key
+    result[mapped] = item[key]
+  }
+  return result
+}
+
 function normalizeData(data) {
   if (Array.isArray(data)) {
-    return data.map(item => ({ ...item, id: item._id }))
+    return data.map(item => normalizeItem(item))
   } else if (data && typeof data === 'object') {
-    return { ...data, id: data._id }
+    return normalizeItem(data)
   }
   return data
 }
