@@ -312,6 +312,38 @@ app.post('/api/tickets/verify', async (req, res) => {
   }
 })
 
+// ==================== 数据清理接口 ====================
+
+// 清理无名称的脏数据（内部维护接口，慎用）
+app.post('/api/_cleanup', async (req, res) => {
+  try {
+    const results = {}
+    // 删除 name 为空的历史展会
+    const { data: badExpos } = await db.collection('expos').where({
+      name: db.command.exists(false)
+    }).get()
+    for (const expo of badExpos) {
+      await db.collection('expos').doc(expo._id).remove()
+    }
+    results.exposDeleted = badExpos.length
+
+    // 删除无名称的票种
+    const { data: badTickets } = await db.collection('ticket_types').where({
+      name: db.command.exists(false)
+    }).get()
+    for (const t of badTickets) {
+      await db.collection('ticket_types').doc(t._id).remove()
+    }
+    results.ticketTypesDeleted = badTickets.length
+
+    console.error('[CLEANUP] done:', JSON.stringify(results))
+    ok(res, results, '清理完成')
+  } catch (e) {
+    console.error('[CLEANUP] error:', e)
+    fail(res, '清理失败：' + e.message)
+  }
+})
+
 // ==================== 统计接口 ====================
 
 app.get('/api/stats', async (req, res) => {
