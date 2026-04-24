@@ -2325,7 +2325,7 @@ async function loadExpos() {
 
     // 过滤搜索
     if (search) {
-      exposData = exposData.filter(e => e.name.toLowerCase().includes(search.toLowerCase()))
+      exposData = exposData.filter(e => (e.name || '').toLowerCase().includes(search.toLowerCase()))
     }
 
     if (exposData.length === 0) {
