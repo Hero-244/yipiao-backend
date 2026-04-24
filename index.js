@@ -102,6 +102,16 @@ app.get('/api/_health', (req, res) => {
   ok(res, { version: 'v1.0.4', time: new Date().toISOString() })
 })
 
+// 调试接口：直接查数据库原始数据
+app.get('/api/_debug/:id', async (req, res) => {
+  try {
+    const { data } = await db.collection('expos').doc(req.params.id).get()
+    ok(res, data[0] || null)
+  } catch (e) {
+    fail(res, e.message)
+  }
+})
+
 // ==================== 文件上传接口 ====================
 
 app.post('/api/upload', upload.single('file'), async (req, res) => {
