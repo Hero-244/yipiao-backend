@@ -51,12 +51,15 @@ const FIELD_MAP = {
 }
 
 // 把 CloudBase 的 _id 转换成 id，同时做 snake_case → camelCase
+// CloudBase 返回: { _id: "...", data: { ...real fields... } }
 function normalizeItem(item) {
+  // 如果有嵌套 data 字段（CloudBase 返回格式），先展开
+  const source = item.data !== undefined ? item.data : item
   const result = {}
-  for (const key of Object.keys(item)) {
-    if (key === '_id') { result.id = item._id; continue }
+  for (const key of Object.keys(source)) {
+    if (key === '_id') { result.id = source._id; continue }
     const mapped = FIELD_MAP[key] || key
-    result[mapped] = item[key]
+    result[mapped] = source[key]
   }
   return result
 }
