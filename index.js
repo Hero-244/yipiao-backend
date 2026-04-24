@@ -52,9 +52,9 @@ const FIELD_MAP = {
 
 // 把 CloudBase 的 _id 转换成 id，同时做 snake_case → camelCase
 function normalizeItem(item) {
-  const result = { id: item._id }
+  const result = {}
   for (const key of Object.keys(item)) {
-    if (key === '_id') continue
+    if (key === '_id') { result.id = item._id; continue }
     const mapped = FIELD_MAP[key] || key
     result[mapped] = item[key]
   }
