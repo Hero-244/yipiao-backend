@@ -134,13 +134,20 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
       fileContent: req.file.buffer
     })
 
-    // 获取文件访问 URL
-    const fileUrl = env.getTempFileURL(result.fileId)
-    const urlResult = await fileUrl()
+    // 获取文件访问 URL（getTempFileURL 直接返回 Promise，fileID 注意大写 D）
+    const urlResult = await env.getTempFileURL({
+      fileList: [result.fileID]
+    })
+
+    const fileItem = urlResult.fileList && urlResult.fileList[0]
+    if (!fileItem || fileItem.code !== 'SUCCESS') {
+      console.error('[UPLOAD] getTempFileURL failed:', urlResult)
+      return fail(res, '获取文件链接失败')
+    }
 
     ok(res, {
-      fileId: result.fileId,
-      url: urlResult.tempFileURL
+      fileId: result.fileID,
+      url: fileItem.tempFileURL
     }, '上传成功')
   } catch (e) {
     console.error('上传失败', e)
