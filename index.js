@@ -36,8 +36,6 @@ const _ = db.command
 
 // ==================== 工具函数 ====================
 
-// ==================== 工具函数 ====================
-
 // 通用字段映射：snake_case → camelCase
 const FIELD_MAP = {
   expo_id: 'expoId',
@@ -48,8 +46,8 @@ const FIELD_MAP = {
   create_time: 'createTime',
   update_time: 'updateTime',
   original_price: 'originalPrice',
-  inventory: 'inventory',
-  sold: 'sold',
+  start_date: 'startDate',
+  end_date: 'endDate',
 }
 
 // 把 CloudBase 的 _id 转换成 id，同时做 snake_case → camelCase
