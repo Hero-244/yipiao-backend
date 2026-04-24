@@ -179,7 +179,6 @@ app.get('/api/expos/:id', async (req, res) => {
 app.post('/api/expos', async (req, res) => {
   try {
     const { name, subtitle, startDate, endDate, venue, location, coords, poster, description, status, sort } = req.body
-    console.log('[CREATE EXPO] req.body:', JSON.stringify(req.body))
     const record = {
       name, subtitle, start_date: startDate, end_date: endDate, venue,
       location, coords, poster, description, status: status || 'draft', sort: sort || 100,
@@ -187,10 +186,8 @@ app.post('/api/expos', async (req, res) => {
     }
     console.log('[CREATE EXPO] record:', JSON.stringify(record))
     const { id } = await db.collection('expos').add({ data: record })
-    console.log('[CREATE EXPO] added id:', id)
-    const { data } = await db.collection('expos').doc(id).get()
-    console.log('[CREATE EXPO] fetched:', JSON.stringify(data[0]))
-    ok(res, data[0], '创建成功')
+    // 直接用 record + id 返回，不依赖 fetch（CloudBase fetch 有时丢字段）
+    ok(res, { ...record, id }, '创建成功')
   } catch (e) {
     console.error('创建展会失败', e)
     fail(res, '创建失败')
